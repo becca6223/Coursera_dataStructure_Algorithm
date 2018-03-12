@@ -2,84 +2,141 @@ import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
-class CoordXY {
-    int x;
-    int y;
-
-    //default constructor
-    public CoordXY (int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-}
-
 public class Percolation {
     //fields
-    int size;
+    int sizeN;
     int openSites;
-    CoordXY [][] n_n_grid;
-    CoordXY top, bottom;
+    int [][] n_n_grid;
+    WeightedQuickUnionUF unionFindArray;
+    int top;
+    int bottom;
 
     //default constructor
     public Percolation (int n) {
-        this.n_n_grid = new CoordXY[n][n];
-        for(int i = 0; i < n; i++) {
-            for(int j = 0; j < n; j++) {
-                this.n_n_grid[i][j] = new CoordXY(i+1, j+1);
-            }
+        if (n <= 0) {
+            throw new IllegalArgumentException("n has to be an int that is greater than 0 !");
         }
-        this.size = n;
+        this.n_n_grid = new int [n][n];
+        this.unionFindArray = new WeightedQuickUnionUF(n*n + 2);
+        this.sizeN = n;
         this.openSites = 0;
-        this.top = new CoordXY(0, 0);
-        this.bottom = new CoordXY(this.size + 1, this.size + 1);
+        this.top = 0;
+        this.bottom = n*n + 1;
     }
 
     public void open (int row, int col) {
-        int openRow = StdRandom.uniform(this.size);
-        int openCol = StdRandom.uniform(this.size);
-        int x =  this.n_n_grid[openRow][openCol].x;
-        int y =  this.n_n_grid[openRow][openCol].y;
-
-        if (x == openRow - 1 && y == openCol - 1) {
+        if (!isOpen(row, col)) {
             //open the site
+            this.n_n_grid[row - 1][col - 1] = 1;
 
+            //union adjacent sites if opened
+            checkAdjAndUnion(row, col, row - 1, col);
+            checkAdjAndUnion(row, col, row + 1, col);
+            checkAdjAndUnion(row, col, row, col - 1);
+            checkAdjAndUnion(row, col, row, col + 1);
+
+            //connect to virtual sites if opened site is the first/last row
+            if(row == 1 && !unionFindArray.connected(ufArrayIndex(row, col), this.top)) {
+                unionFindArray.union(ufArrayIndex(row, col), this.top);
+            }
+            else if(row == this.sizeN && !unionFindArray.connected(ufArrayIndex(row, col), this.bottom)) {
+                unionFindArray.union(ufArrayIndex(row, col), this.bottom);
+            }
 
             this.openSites++;
         }
     }
 
     public boolean isOpen (int row, int col) {
-        return true;
+        if((row - 1) < 0 || (row - 1 >= this.sizeN) || (col - 1) < 0 || (col - 1) >= this.sizeN) {
+            //check boundary of the site for checkAdjAndUnion func
+            return false;
+        }
+        else if (this.n_n_grid[row - 1][col - 1] == 1) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
+
     public boolean isFull (int row, int col) {
-        return true;
+        //if it is connected to the top
+        return unionFindArray.connected(ufArrayIndex(row, col), this.top);
     }
+
     public int numberOfOpenSites() {
         return this.openSites;
     }
+
     public boolean percoltaes() {
-        return true;
+        return unionFindArray.connected(this.top, this.bottom);
     }
 
     //helper methods for public methods
+    private int ufArrayIndex(int row, int col) {
+        //convert n by n grid x,y coord. into 1 dimensional index value
+        return (row - 1) * this.sizeN + (col - 1) + 1;
+    }
+
+    private void checkAdjAndUnion(int oriRow, int oriCol, int row, int col) {
+        if(isOpen(row, col) && !this.unionFindArray.connected(ufArrayIndex(oriRow, oriCol), ufArrayIndex(row, col))) {
+                this.unionFindArray.union(ufArrayIndex(oriRow, oriCol), ufArrayIndex(row, col));
+        }
+    }
 
     //Methods for testing purpose
-    private void print_n_n_grid() {
-        for(int i = 0; i < this.size; i++) {
-            for(int j = 0; j < this.size; j++) {
-                System.out.print(this.n_n_grid[i][j].x);
-                System.out.print(this.n_n_grid[i][j].y + " ");
+    private void print_n_n_grid_xy() {
+        for(int i = 0; i < this.sizeN; i++) {
+            for(int j = 0; j < this.sizeN; j++) {
+                System.out.print(i+1);
+                System.out.print((j+1) + " ");
             }
             System.out.println();
         }
     }
 
+    private void print_n_n_grid_val() {
+        for(int i = 0; i < this.sizeN; i++) {
+            for(int j = 0; j < this.sizeN; j++) {
+                System.out.print(this.n_n_grid[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    private int[] test_xy() {
+        int[] coord = new int[2];
+        coord[0] = StdRandom.uniform(this.sizeN) + 1;
+        coord[1] = StdRandom.uniform(this.sizeN) + 1;
+        System.out.print(coord[0] + " ");
+        System.out.println(coord[1]);
+        return coord;
+    }
+
+    private void test_open1site(Percolation n_n_percolation_test) {
+        System.out.println();
+        int[] xy  = n_n_percolation_test.test_xy();
+        n_n_percolation_test.open(xy[0], xy[1]);
+        n_n_percolation_test.print_n_n_grid_val();
+
+    }
+
     //Main method
     public static void main (String[] args)
     {
+        //create a 6 by 6 grid
         Percolation n_n_percolation_test = new Percolation(6);
-        n_n_percolation_test.print_n_n_grid();
-        WeightedQuickUnionUF test = new WeightedQuickUnionUF(6);
-        System.out.print(test);
+        n_n_percolation_test.print_n_n_grid_xy();
+        n_n_percolation_test.print_n_n_grid_val();
+
+        for(int i = 0; i < 45; i++) {
+            n_n_percolation_test.test_open1site(n_n_percolation_test);
+            if(n_n_percolation_test.percoltaes()) {
+                System.out.println("Percolates happen!");
+                System.out.println(n_n_percolation_test.numberOfOpenSites());
+                break;
+            }
+        }
     }
 }
