@@ -1,5 +1,4 @@
 import edu.princeton.cs.algs4.StdRandom;
-import edu.princeton.cs.algs4.StdStats;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
@@ -109,34 +108,29 @@ public class Percolation {
         int[] coord = new int[2];
         coord[0] = StdRandom.uniform(this.sizeN) + 1;
         coord[1] = StdRandom.uniform(this.sizeN) + 1;
-        System.out.print(coord[0] + " ");
-        System.out.println(coord[1]);
+        //System.out.print(coord[0] + " ");
+        //System.out.println(coord[1]);
         return coord;
     }
 
-    private void test_open1site(Percolation n_n_percolation_test) {
-        System.out.println();
-        int[] xy  = n_n_percolation_test.test_xy();
-        n_n_percolation_test.open(xy[0], xy[1]);
-        n_n_percolation_test.print_n_n_grid_val();
+    public int runTillPercolates(Percolation n_n_percolation_test) {
+        while(!n_n_percolation_test.percoltaes()) {
+            int[] xy  = n_n_percolation_test.test_xy();
+            n_n_percolation_test.open(xy[0], xy[1]);
+        }
 
+        return n_n_percolation_test.numberOfOpenSites();
     }
 
     //Main method
     public static void main (String[] args)
     {
         //create a 6 by 6 grid
-        Percolation n_n_percolation_test = new Percolation(6);
-        n_n_percolation_test.print_n_n_grid_xy();
-        n_n_percolation_test.print_n_n_grid_val();
+        Percolation n_n_percolation_test = new Percolation(15);
+        //n_n_percolation_test.print_n_n_grid_xy();
+        //n_n_percolation_test.print_n_n_grid_val();
 
-        for(int i = 0; i < 45; i++) {
-            n_n_percolation_test.test_open1site(n_n_percolation_test);
-            if(n_n_percolation_test.percoltaes()) {
-                System.out.println("Percolates happen!");
-                System.out.println(n_n_percolation_test.numberOfOpenSites());
-                break;
-            }
-        }
+        System.out.print(n_n_percolation_test.runTillPercolates(n_n_percolation_test));
+
     }
 }
