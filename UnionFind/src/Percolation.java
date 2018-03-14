@@ -52,11 +52,7 @@ public class Percolation {
 
     public boolean isOpen (int row, int col) {
         checkError(row, col);
-        if((row - 1) < 0 || (row - 1 >= this.sizeN) || (col - 1) < 0 || (col - 1) >= this.sizeN) {
-            //check boundary of the site for checkAdjAndUnion func
-            return false;
-        }
-        else if (this.n_n_grid[row - 1][col - 1] == 1) {
+        if (this.n_n_grid[row - 1][col - 1] == 1) {
             return true;
         }
         else {
@@ -66,7 +62,7 @@ public class Percolation {
 
     public boolean isFull (int row, int col) {
         //if it is connected to the top
-        //unionFindFull don't connect to the bott
+        //unionFindFull don't connect to the bottom
         checkError(row, col);
         return unionFindFull.connected(ufArrayIndex(row, col), this.top);
     }
@@ -86,11 +82,14 @@ public class Percolation {
     }
 
     private void checkAdjAndUnion(int oriRow, int oriCol, int row, int col) {
-        if(isOpen(row, col) && !this.unionFindArray.connected(ufArrayIndex(oriRow, oriCol), ufArrayIndex(row, col))) {
+        if(!((row - 1) < 0 || (row - 1 >= this.sizeN) || (col - 1) < 0 || (col - 1) >= this.sizeN)) {
+            //check boundary of the site for checkAdjAndUnion func
+            if (isOpen(row, col) && !this.unionFindArray.connected(ufArrayIndex(oriRow, oriCol), ufArrayIndex(row, col))) {
                 this.unionFindArray.union(ufArrayIndex(oriRow, oriCol), ufArrayIndex(row, col));
-        }
-        if(isOpen(row, col) && !this.unionFindFull.connected(ufArrayIndex(oriRow, oriCol), ufArrayIndex(row, col))) {
-            this.unionFindFull.union(ufArrayIndex(oriRow, oriCol), ufArrayIndex(row, col));
+            }
+            if (isOpen(row, col) && !this.unionFindFull.connected(ufArrayIndex(oriRow, oriCol), ufArrayIndex(row, col))) {
+                this.unionFindFull.union(ufArrayIndex(oriRow, oriCol), ufArrayIndex(row, col));
+            }
         }
     }
 
@@ -141,5 +140,6 @@ public class Percolation {
         n_n_percolation_test.open(1,1);
         n_n_percolation_test.print_n_n_grid_val();
         System.out.println(n_n_percolation_test.percolates());
+        n_n_percolation_test.isOpen(2,3);
     }
 }
