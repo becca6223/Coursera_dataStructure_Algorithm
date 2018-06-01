@@ -19,21 +19,19 @@ public class PercolationStats {
         this.sizeN = n;
         this.trials = trials;
         this.thresholds = new double[trials];
-        this.meanVal = 0;
-        this.stddevVal = 0;
         for(int i = 0; i < trials; i++) {
             Percolation newTest = new Percolation(n);
             this.thresholds[i] = this.runTillPercolates(newTest) / (double) (n*n);
         }
+        this.meanVal = StdStats.mean(this.thresholds);
+        this.stddevVal = StdStats.stddev(this.thresholds);
     }
 
     public double mean() {
-        this.meanVal = StdStats.mean(this.thresholds);
         return this.meanVal;
     }
 
     public double stddev() {
-        this.stddevVal = StdStats.stddev(this.thresholds);
         return this.stddevVal;
     }
 

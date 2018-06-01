@@ -60,6 +60,7 @@ public class Percolation {
         }
     }
 
+    //isFull still fail sometimes
     public boolean isFull (int row, int col) {
         //if it is connected to the top
         //unionFindFull don't connect to the bottom
@@ -130,7 +131,7 @@ public class Percolation {
     public static void main (String[] args)
     {
         //create a 6 by 6 grid
-        Percolation n_n_percolation_test = new Percolation(1);
+        Percolation n_n_percolation_test = new Percolation(9);
         //n_n_percolation_test.print_n_n_grid_xy();
         //n_n_percolation_test.print_n_n_grid_val();
 
@@ -138,8 +139,8 @@ public class Percolation {
         //n_n_percolation_test.print_n_n_grid_val();
         //System.out.print(n_n_percolation_test.isFull(15,6));
         n_n_percolation_test.open(1,1);
-        n_n_percolation_test.print_n_n_grid_val();
-        System.out.println(n_n_percolation_test.percolates());
-        n_n_percolation_test.isOpen(2,3);
+        //n_n_percolation_test.print_n_n_grid_val();
+        System.out.println(n_n_percolation_test.isFull(1,1));
+        //n_n_percolation_test.isOpen(2,3);
     }
 }
