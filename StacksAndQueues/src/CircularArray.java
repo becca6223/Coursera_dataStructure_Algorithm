@@ -48,7 +48,7 @@ public class CircularArray {
         }
     }
 
-    public int dequeue () {
+    public int deque () {
 
         if (isEmpty()) {
             System.out.println("\nThe array is empty!");
@@ -80,7 +80,7 @@ public class CircularArray {
 
         System.out.println("\nReading operation");
         for(int i = 0; i < size; i++) {
-            System.out.print(cir_array.dequeue() + " ");
+            System.out.print(cir_array.deque() + " ");
         }
     }
 
