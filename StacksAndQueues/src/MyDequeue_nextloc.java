@@ -89,19 +89,22 @@ public class MyDequeue_nextloc <Item> {
             //throw exception
             throw new NoSuchElementException();
         }
-        else {
-            hpt = (hpt + 1) % this.arraySize; //the current element at the head
-            this.num_elements--;
 
-            //update tail pointer
-            if (this.num_elements == 0) {
-                tpt--;
-                if(tpt == -1) {
-                    tpt = this.arraySize-1;
-                }
-            }
-            return this.array[hpt];
+        if (isQuarter()) {
+            resize_shrink();
         }
+
+        hpt = (hpt + 1) % this.arraySize; //the current element at the head
+        this.num_elements--;
+
+        //update tail pointer
+        if (this.num_elements == 0) {
+            tpt--;
+            if(tpt == -1) {
+                tpt = this.arraySize-1;
+            }
+        }
+        return this.array[hpt];
     }
 
     public Item removeLast() {
@@ -109,24 +112,32 @@ public class MyDequeue_nextloc <Item> {
             //throw exception
             throw new NoSuchElementException();
         }
-        else {
-            tpt--; //the current element at the tail
-            if(tpt == -1) {
-                tpt = this.arraySize-1;
-            }
-            this.num_elements--;
 
-            //update head pointer
-            if (this.num_elements == 0) {
-                hpt = (hpt + 1) % this.arraySize;
-            }
-            return this.array[tpt];
+        if (isQuarter()) {
+            resize_shrink();
         }
+
+        tpt--; //the current element at the tail
+        if(tpt == -1) {
+            tpt = this.arraySize-1;
+        }
+        this.num_elements--;
+
+        //update head pointer
+        if (this.num_elements == 0) {
+            hpt = (hpt + 1) % this.arraySize;
+        }
+        return this.array[tpt];
+
     }
 
-    //helper functions
+    //My Useful Functions
     private boolean isFull() {
         return this.num_elements == this.arraySize;
+    }
+
+    private boolean isQuarter() {
+        return this.num_elements == this.arraySize / 4;
     }
 
     private void resize_grow() {
@@ -143,6 +154,12 @@ public class MyDequeue_nextloc <Item> {
         this.array = copy;
     }
 
+    private void resize_shrink() {
+
+    }
+
+
+    //Helper Functions
     private int __tailPos(int cur_tpt) {
         //the actual tail position, not next available location for tail
         if(cur_tpt - 1 < 0) {
@@ -154,7 +171,7 @@ public class MyDequeue_nextloc <Item> {
         return cur_tpt;
     }
 
-    //main function
+    //Main Function
     public static void main(String[] args) {
         //Test Fixed Capacity Dequeue
         String control = "pass";
