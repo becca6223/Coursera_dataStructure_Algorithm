@@ -1,5 +1,3 @@
-import jdk.internal.cmm.SystemResourcePressureImpl;
-
 import java.lang.IllegalArgumentException;
 import java.util.NoSuchElementException;
 import java.lang.UnsupportedOperationException;
@@ -22,6 +20,7 @@ public class MyDequeue_nextloc <Item> {
         this.tpt = 0;
         this.num_elements = 0;
         this.arraySize = 4;
+        //For coursera, you need to create an empty array
     }
 
     //Methods
@@ -155,7 +154,24 @@ public class MyDequeue_nextloc <Item> {
     }
 
     private void resize_shrink() {
+        Item[] copy = (Item[]) new Object[this.arraySize/2]; //create a one-half array
 
+        int cur_hpt = __headPos(this.hpt); //pointer at head
+        int cur_tpt = __tailPos(this.tpt); //pointer at tail
+
+        if ((cur_hpt + this.num_elements - 1) < (this.arraySize - 1)) {
+            System.arraycopy(this.array, cur_hpt, copy, 0, this.num_elements);
+        }
+        else {
+            System.arraycopy(this.array, cur_hpt, copy, 0, this.arraySize - cur_hpt);
+            System.arraycopy(this.array, 0, copy,this.arraySize - cur_hpt, cur_tpt + 1);
+        }
+
+        //update this.array address to the one-half array(copy), and update hpt, tpt
+        this.array = copy;
+        this.arraySize = this.arraySize / 2;
+        this.hpt = this.arraySize - 1;
+        this.tpt = this.num_elements;
     }
 
 
@@ -169,6 +185,10 @@ public class MyDequeue_nextloc <Item> {
             cur_tpt--;
         }
         return cur_tpt;
+    }
+
+    private int __headPos(int cur_hpt) {
+        return (cur_hpt + 1) % this.arraySize;
     }
 
     //Main Function
